@@ -54,4 +54,47 @@ document.getElementById('import-file').addEventListener('change', (event) => { c
     };
     fileReader.readAsText(event.target.files[0]);
   }
+function populateCategories() {
+    const categorySelect = document.getElementById('category-select'); // Assuming an HTML element with this ID
+    const categories = [...new Set(quotes.map(quote => quote.category))];
 
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    });
+}
+function filterQuotes() {
+    const categorySelect = document.getElementById('category-select');
+    const selectedCategory = categorySelect.value;
+    // Logic to filter the quotes array and update the DOM (display area)
+    // Example:
+    // const filteredQuotes = quotes.filter(quote => selectedCategory === 'all' || quote.category === selectedCategory);
+    // displayQuotes(filteredQuotes); // A separate function to render quotes
+}
+// On page load:
+window.onload = () => {
+    // ... other onload logic ...
+    const savedCategory = localStorage.getItem('lastCategoryFilter');
+    if (savedCategory) {
+        document.getElementById('category-select').value = savedCategory;
+        filterQuotes();
+    }
+};
+
+// When filter changes:
+document.getElementById('category-select').addEventListener('change', (event) => {
+    localStorage.setItem('lastCategoryFilter', event.target.value);
+    filterQuotes();
+});
+function addQuote(newQuote) {
+    // 1. Add newQuote to the quotes array
+    // 2. Update quotes in local storage
+    // 3. Check if new category exists, if not, call populateCategories()
+    // Example:
+    // quotes.push(newQuote);
+    // localStorage.setItem('quotes', JSON.stringify(quotes));
+    // populateCategories(); // This function handles duplicates automatically
+    // filterQuotes(); // Refresh displayed quotes
+}

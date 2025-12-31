@@ -22,8 +22,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
 showRandomQuote();
 createAddQuoteForm();
 });
-<div>
-<input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-<input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-<button onclick="addQuote()">Add Quote</button>
-</div>
+function addQuote() {
+    const newQuoteText = document.getElementById('newQuoteText').value;
+    const newQuoteCategory = document.getElementById('newQuoteCategory').value;
+
+    if (newQuoteText && newQuoteCategory) {
+        const newQuote = { text: newQuoteText, category: newQuoteCategory };
+        quotes.push(newQuote);
+        console.log('Quotes array updated:', quotes);
+        // Additional code would be needed here to update the DOM visually
+        // e.g., create a new div element and append it to a quotes container
+        document.getElementById('newQuoteText').value = '';
+        document.getElementById('newQuoteCategory').value = '';
+    } else {
+        alert('Please enter both a quote and a category.');
+    }
+}
+const saveQuotes = () => { localStorage.setItem('quotes', JSON.stringify(quotes)); };
+const loadQuotes = () => { const storedQuotes = localStorage.getItem('quotes'); if (storedQuotes) { quotes = JSON.parse(storedQuotes); displayQuotes(); } };
+const saveLastViewed = (quote) => { sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote)); };
+const getLastViewed = () => { const lastViewed = sessionStorage.getItem('lastViewedQuote'); return lastViewed ? JSON.parse(lastViewed) : null; };
+document.getElementById('export-btn').addEventListener('click', () => { const json = JSON.stringify(quotes, null, 2); const blob = new Blob([json], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'quotes.json'; a.click(); URL.revokeObjectURL(url); });
+document.getElementById('import-file').addEventListener('change', (event) => { const file = event.target.files[0]; if (!file) { return; } const reader = new FileReader(); reader.onload = (e) => { try { const importedQuotes = JSON.parse(e.target.result); quotes = importedQuotes; saveQuotes(); displayQuotes(); alert('Quotes imported successfully!'); } catch (error) { alert('Error importing quotes: Invalid JSON file'); } }; reader.readAsText(file); });
+

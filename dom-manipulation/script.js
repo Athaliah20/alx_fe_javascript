@@ -44,4 +44,14 @@ const saveLastViewed = (quote) => { sessionStorage.setItem('lastViewedQuote', JS
 const getLastViewed = () => { const lastViewed = sessionStorage.getItem('lastViewedQuote'); return lastViewed ? JSON.parse(lastViewed) : null; };
 document.getElementById('export-btn').addEventListener('click', () => { const json = JSON.stringify(quotes, null, 2); const blob = new Blob([json], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'quotes.json'; a.click(); URL.revokeObjectURL(url); });
 document.getElementById('import-file').addEventListener('change', (event) => { const file = event.target.files[0]; if (!file) { return; } const reader = new FileReader(); reader.onload = (e) => { try { const importedQuotes = JSON.parse(e.target.result); quotes = importedQuotes; saveQuotes(); displayQuotes(); alert('Quotes imported successfully!'); } catch (error) { alert('Error importing quotes: Invalid JSON file'); } }; reader.readAsText(file); });
+ function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      const importedQuotes = JSON.parse(event.target.result);
+      quotes.push(...importedQuotes);
+      saveQuotes();
+      alert('Quotes imported successfully!');
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
 
